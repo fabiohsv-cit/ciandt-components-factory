@@ -224,10 +224,23 @@ define(['ciandt-components-dialogs',
             },
 
             loadModules: function (url, options, onloadmodule, onfinish) {
-				var ignoredModules = options ? options.ignoredModules : undefined;
-				var envJsPath = options ? options.envJsPath : 'app/{module}/env/{module}-env.js';
-				var appJsPath = options ? options.appJsPath : 'app/{module}/{module}-app.js';
-				var useRestangular = options && angular.isDefined(options.useRestangular) ? options.useRestangular : true;
+				var ignoredModules;
+				var envJsPath;
+				var appJsPath;
+				var useRestangular;
+				
+				if (options && typeof options.push == "function") {
+					ignoredModules = options;
+					envJsPath = 'app/{module}/env/{module}-env.js';
+					appJsPath = 'app/{module}/{module}-app.js';
+					useRestangular = true;
+				} else {
+					ignoredModules = options ? options.ignoredModules : undefined;
+					envJsPath = options && angular.isDefined(options.envJsPath) ? options.envJsPath : 'app/{module}/env/{module}-env.js';
+					appJsPath = options && angular.isDefined(options.appJsPath) ? options.appJsPath : 'app/{module}/{module}-app.js';
+					useRestangular = options && angular.isDefined(options.useRestangular) ? options.useRestangular : true;
+				}
+				
                 require([url], function (response) {
                     var size = response.modules.length;
                     var count = 0;
@@ -238,8 +251,8 @@ define(['ciandt-components-dialogs',
                             count++;
                         } else {
                             $log.info('Load module: ' + module);
-							var _envJsPath = envJsPath.replace('{module}', module);
-							var _appJsPath = appJsPath.replace('{module}', module);
+							var _envJsPath = envJsPath.replace(/{module}/g, module);
+							var _appJsPath = appJsPath.replace(/{module}/g, module);
                             // carrega env
                             require([_envJsPath], function (moduleEnvSettings) {
                                 // carrega app

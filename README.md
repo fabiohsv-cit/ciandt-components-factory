@@ -1,5 +1,5 @@
 # ciandt-components-factory
-Factory helper to create with facility angularjs components (controllers, directives, filters...) and ensures that all dependencies are loaded before, using requirejs. In other words, the factory easily integrate requirejs and angular. The factory should be used on javascript file to declare same angularjs components types. Each components types has a factory function. See more below.
+Factory helper to easily create angularjs components (controllers, directives, filters...) and ensures that all dependencies are loaded before it, using requirejs. In other words, the factory easily integrates requirejs and angular. The factory should be used on a javascript file to declare same angularjs components types. Each component type has a factory function. See more below.
 
 ### Install
 
@@ -24,36 +24,38 @@ Factory helper to create with facility angularjs components (controllers, direct
 ### How To Use
 
 1. **newController(controllerName, func)**
-   - this function create a new controller in your app angular module
+   - this function creates a new controller in your angular module
    ```javascript
    factory.newController("yourController", [function () {
       // your controller body
 	  // we recommend write controller using vm pattern
    }]);
    ```
+
 2. **newService(serviceName, api, actions, params)**
-   - this function create a new service based in $resource
+   - this function creates a new service based in $resource
    ```javascript
    factory.newService("yourService", 'api/myAction/:userId', {'get': {method: 'GET'}}, {itemId:'@id'});
    .
    .
-   // using 'yourService' in controller
+   // using 'yourService' in a controller
    app.controller(['yourService', function (yourService) {
       var item = yourService.get(id);
 	  item.post();
    }])
    ```
+
 3. **newModal(directiveName, templateUrl, controllerName, injection, modalOptions)**
-   - this function create a new directive and controller at the same time, to open modal. It uses ciandt.components.dialogs.ModalHelper to open the modal.
-   -- directiveName: directive name that will be created
-   -- templateUrl: url to your html
-   -- controllerName: controller name that will be created
-   -- injection: it's an array that represent injections, input params and the controller function. Important: if your controller needs input parametters, you should declare imediatly before controller function, in an array of strings.
-   -- modalOptions: modal options, e.g. {size: 'lg'}
+   * this function creates a new directive and a controller at the same time, to open as a modal. It uses ciandt.components.dialogs.ModalHelper to open the modal.
+   - directiveName: directive name that will be created
+   - templateUrl: url to your html
+   - controllerName: controller name that will be created
+   - injection: it's an array that represent injections, input params and the controller function. Important: if your controller needs input parametters, you should declare them imediately before the controller function, in an array of strings.
+   - modalOptions: modal options, e.g. {size: 'lg'}
    ```javascript
    factory.newModal("yourModalDirective", 'app/view/yourModal.html', ['myService', ['param1', 'param2'], function (myService, param1, param2) {
       // your controller body
-	  // we recommend write controller using vm pattern
+	  // we recommend writting the controller using the vm pattern
    }], {size: 'lg'});
    ```
    ```html
@@ -62,8 +64,9 @@ Factory helper to create with facility angularjs components (controllers, direct
    <input your-modal-directive="onblur">
    ```
    - the example above will open the page 'app/view/yourModal.html' in a modal using $modal (an angular-bootstrap component)
+
 4. **newDirective(name, injects)**
-   - this function create a new directive in your app angular module
+   - this function creates a new directive in your angular module
    ```javascript
    factory.newDirective("yourDirective", [function () {
       return {
@@ -74,8 +77,9 @@ Factory helper to create with facility angularjs components (controllers, direct
       }
    }]);
    ```
+
 5. **newFilter(name, injects)**
-   - this function create a new filter in your app angular module
+   - this function creates a new filter in your angular module
    ```javascript
    factory.newFilter('haveModuleWithFeatures', [function () {
       return function (values) {
@@ -83,37 +87,39 @@ Factory helper to create with facility angularjs components (controllers, direct
       }
    ]);
    ```
+
 6. **loadModules(url, options, onloadmodule, onfinish)**
-   - this function load all modules returned by response url called. It's recomended if your app has modules with dynamicly load.
-   - options:
-   -- ignoredModules: list of modules to ignore
-   -- envJsPath: path to env settings json module
-   -- appJsPath: path to app.js module
+   * this function loads all modules returned by the response of the called url. It's recomended if your app has modules that are dynamicaly loaded.
+   * options:
+   - ignoredModules: list of modules to ignore
+   - envJsPath: path to env settings json module
+   - appJsPath: path to app.js module
    ```javascript
    factory.loadModules('myModules.json', {ignoredModules: ['common'], envJsPath: 'app/{module}/env.js', appJsPath: 'app/{module}/app.js'}, function (module, moduleEnvSettings) {
-         // event called on finish load each module
+         // event called when it finishes loading each module
       },
       function (modules) {
-         // event called on finish load all modules
+         // event called when it finishes loading all modules
       }
    );
    
    // myModules.json:
    define({modules:['common', 'security', 'billing']});
    ```
-   - this function also create a Restangular service for each module, it's named [module]RestService. You can disable this feature, use options useRestangular=false for this.
+   - this function also create a Restangular service for each module, it's named [module]RestService. You can disable this feature using option useRestangular=false for this.
+
 7. **newModule(module, externalDepsJs, depsModules, internalDepsJs, funcConfig, funcRun)**
-   - this function create a module in your angular app
+   - this function creates a module in your angular app
    ```javascript
    factory.newModule('myModule',
-      [/*external scripts need in this module, ex: jquery, dojo, angular-ngMask, etc...*/
+      [/*external scripts needed in this module, ex: jquery, dojo, angular-ngMask, etc...*/
          'assets/libs/externalScript1.js',
 		 'assets/libs/externalScript2.js'
       ],
-      [/*módulos angular dependentes deste sistema*/
+      [/*angular modules that depends on this module*/
          'ngMask'
       ],
-      [/*internal scripts need in this module, ex: directives, filters, controllers, etc...*/
+      [/*internal scripts needed in this module, ex: directives, filters, controllers, etc...*/
          'app/mymodule/directives/my-directives.js'
       ],
       [/*angular config block for this module*/
