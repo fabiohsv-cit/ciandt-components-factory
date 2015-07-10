@@ -1,0 +1,29 @@
+{
+  "name": "ciandt-components-factory",
+  "version": "0.0.1",
+  "homepage": "https://github.com/fabiohsv-cit/ciandt-components-factory",
+  "authors": [
+    "Fábio Henrique da Silva Viana <fabiohsv@ciandt.com>"
+  ],
+  "description": "Factory helper to create with facility angularjs components (controllers, directives, filters...)",
+  "main": ["factory.js"],
+  "dependencies": {
+	"ciandt-components-dialogs": "*"
+  },
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "angular",
+    "factory",
+	"controller",
+	"filter",
+	"directive",
+	"module",
+	"modal",
+	"service",
+	"resource",
+	"requirejs"
+  ],
+  "license": "MIT"
+}
