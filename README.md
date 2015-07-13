@@ -88,7 +88,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    ]);
    ```
 
-6. **newModule(module, externalDepsJs, depsModules, internalDepsJs, funcConfig, funcRun)**
+6. **newModule(module, options)**
    - this function creates a module in your angular app
    ```javascript
    factory.newModule('myModule', {
@@ -118,7 +118,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    });
    ```
 
-6. **loadModules(url, options, onloadmodule, onfinish)**
+6. **loadModules(url, options)**
    * this function loads all modules returned by the response of the called url. It's recomended if your app has modules that are dynamicaly loaded.
    * options:
    - ignoredModules: list of modules to ignore
