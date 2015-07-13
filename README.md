@@ -19,6 +19,14 @@ Factory helper to easily create angularjs components (controllers, directives, f
    ```javascript
    angular.module('yourApp', ['ciandt.components.factory']);
    ```
+
+* Requirements:
+
+   - lodash: it's used in internal statement
+   - ciandt.components.dialogs: it's used to open the modal (newModal function below)
+   - requirejs: it's used to load the module scripts (app.js, env.js, etc).
+   - restangular: it's used to create a restangular factory to the module (newModule function below).
+   - file-saver-saveas-js: it's used to expose methods to download using restangular factory.
 ======
 
 ### How To Use
@@ -118,8 +126,8 @@ Factory helper to easily create angularjs components (controllers, directives, f
    });
    ```
 
-6. **loadModules(url, options)**
-   * this function loads all modules returned by the response of the called url. It's recomended if your app has modules that are dynamicaly loaded.
+6. **loadModules(urlOrModules, options)**
+   * this function loads all modules returned by the response of the called url. It's recomended if your app has modules that are dynamicaly loaded. The fist param can be a list of modules.
    * options:
    - ignoredModules: list of modules to ignore
    - appJsPath: path to app.js module
@@ -137,7 +145,19 @@ Factory helper to easily create angularjs components (controllers, directives, f
       }
    });
    
+   Or
+   
+   factory.loadModules(['myModule1', 'myModule1'], {
+      appJsPath: 'app/{module}/app.js',
+      onloadmodule: function (module, moduleEnvSettings) {
+         // event called when it finishes loading each module
+      },
+      onfinish: function (modules) {
+         // event called when it finishes loading all modules
+      }
+   });
+   
    // myModules.json:
-   define({modules:['common', 'security', 'billing']});
+   define(function(){return ['common', 'security', 'billing']};);
    ```
    - recommended use newModule in your app.js

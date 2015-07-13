@@ -244,6 +244,7 @@ define(['ciandt-components-dialogs',
 								hasInternalDeps = true;
 								// carrega submodulos internos do sistema
 								require(internalDepsJs, function () {
+									$log.info('Module loaded: ' + module);
 									// emit event module loaded
 									$rootScope.$broadcast('factory:moduleloaded', module, moduleEnvSettings, arguments);
 								});
@@ -251,6 +252,7 @@ define(['ciandt-components-dialogs',
 						}
 
 						if (!hasInternalDeps) {
+							$log.info('Module loaded: ' + module);
 							// emit event module loaded
 							$rootScope.$broadcast('factory:moduleloaded', module, moduleEnvSettings);
 						}
@@ -314,7 +316,7 @@ define(['ciandt-components-dialogs',
 				});
 			},
 
-			loadModules: function (url, options, _onfinish) {
+			loadModules: function (urlOrModules, options, _onfinish) {
 				var ignoredModules;
 				var appJsPath;
 				var onloadmodule;
@@ -331,8 +333,8 @@ define(['ciandt-components-dialogs',
 					onfinish = options.onfinish;
 				}
 				
-				require([url], function (response) {
-					var size = response.modules.length;
+				var _loadModules = function(modules) {
+					var size = modules.length;
 					var count = 0; // atd modulos carregados via require
 
 					var modulesLoaded = [];
@@ -348,22 +350,28 @@ define(['ciandt-components-dialogs',
 
 						// após carregar todos os módulos dispara evento
 						if (modulesLoaded.length == count && onfinish) {
-							onfinish(response.modules);
+							onfinish(modules);
 						}
 					});
 
 					// pra cada modulo, carrega o env e app do mesmo
-					angular.forEach(response.modules, function (module) {
+					angular.forEach(modules, function (module) {
 						// verifica se modulo não está na lista de ignorados no load
 						if (!(ignoredModules && _.any(ignoredModules, function (item) { return item == module }))) {
 							count++;
-							$log.info('Load module: ' + module);
+							$log.info('Dispatch Load module: ' + module);
 							var _appJsPath = appJsPath.replace(/{module}/g, module);
 							// carrega app
 							require([_appJsPath]);
 						}
 					});
-				});
+				};
+				
+				if (typeof urlOrModules.push == "function") {
+					_loadModules(urlOrModules);
+				} else {
+					require([urlOrModules], _loadModules);
+				}
 			}
 		};
 
@@ -373,5 +381,4 @@ define(['ciandt-components-dialogs',
 			return angular.extend({}, window.factory);
 		}];
 	}]);
-
 });
