@@ -27,6 +27,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    - requirejs: it's used to load the module scripts (app.js, env.js, etc).
    - restangular: it's used to create a restangular factory to the module (newModule function below).
    - file-saver-saveas-js: it's used to expose methods to download using restangular factory.
+
 ======
 
 ### How To Use
