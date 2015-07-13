@@ -1,345 +1,377 @@
 'use strict';
 
 define(['ciandt-components-dialogs',
-        'restangular',
-        'file-saver-saveas-js',
-        'lodash'], function () {
+		'restangular',
+		'file-saver-saveas-js',
+		'lodash'], function () {
 
-    angular.module('ciandt.components.factory', ['ciandt.components.dialogs', 'restangular']);
+	angular.module('ciandt.components.factory', ['ciandt.components.dialogs', 'restangular']);
 
-    angular.module('ciandt.components.factory').provider('ciandt.components.factory.FactoryHelper', [function () {
-        var $log = angular.injector(['ng']).get('$log');
+	angular.module('ciandt.components.factory').provider('ciandt.components.factory.FactoryHelper', ['$injector', function ($injector) {
+		var $log = angular.injector(['ng']).get('$log');
+		var $rootScope = angular.injector(['ng']).get('$rootScope');
 
-        window.factory = {
-            newController: function (controllerName, func, app) {
-                var injects = func;
-                if (!angular.isArray(func)) {
-                    var serviceName = controllerName.replace('Ctrl', 'Service');
+		window.factory = {
+			newController: function (controllerName, func, app) {
+				var injects = func;
+				if (!angular.isArray(func)) {
+					var serviceName = controllerName.replace('Ctrl', 'Service');
 
-                    injects = ['$location', serviceName, 'envSettings', func];
-                }
+					injects = ['$location', serviceName, 'envSettings', func];
+				}
 
-                var module = controllerName.split('.');
-                var submodule = module[0] + '.' + module[1] + '.' + module[2] + '.ctrls';
-                module = module[0] + '.' + module[1];
+				var module = controllerName.split('.');
+				var submodule = module[0] + '.' + module[1] + '.' + module[2] + '.ctrls';
+				module = module[0] + '.' + module[1];
 
-                var init = function (app) {
-                    $log.info('Load controller: ' + controllerName);
+				var init = function (app) {
+					$log.info('Load controller: ' + controllerName);
 
-                    angular.module(submodule, [module]).controller(controllerName, injects);
-                };
+					angular.module(submodule, [module]).controller(controllerName, injects);
+				};
 
-                if (app) {
-                    init(app);
-                } else {
-                    define(['app'], init);
-                }
-            },
+				if (app) {
+					init(app);
+				} else {
+					define(['app'], init);
+				}
+			},
 
-            newService: function (serviceName, api, actions, params, app) {
-                if (!params) {
-                    params = {}
-                }
+			newService: function (serviceName, api, actions, params, app) {
+				if (!params) {
+					params = {}
+				}
 
-                var module = serviceName.split('.');
-                var submodule = module[0] + '.' + module[1] + '.' + module[2] + '.ctrls';
-                module = module[0] + '.' + module[1];
+				var module = serviceName.split('.');
+				var submodule = module[0] + '.' + module[1] + '.' + module[2] + '.ctrls';
+				module = module[0] + '.' + module[1];
 
-                var init = function (app) {
-                    angular.module(submodule, [module]).factory(serviceName, ['$resource', function ($resource) {
-                        $log.info('Load Service: ' + serviceName);
-                        return $resource(api, params, actions);
-                    }]);
-                };
+				var init = function (app) {
+					angular.module(submodule, [module]).factory(serviceName, ['$resource', function ($resource) {
+						$log.info('Load Service: ' + serviceName);
+						return $resource(api, params, actions);
+					}]);
+				};
 
-                if (app) {
-                    init(app);
-                } else {
-                    define(['app'], init);
-                }
-            },
+				if (app) {
+					init(app);
+				} else {
+					define(['app'], init);
+				}
+			},
 
-            newModule: function (module, externalDepsJs, depsModules, internalDepsJs, funcConfig, funcRun) {
-                var _externalDepsJs = ['app'];
-                if (externalDepsJs) {
-                    if (!angular.isArray(externalDepsJs)) {
-                        externalDepsJs = [externalDepsJs];
-                    }
-                    _externalDepsJs = externalDepsJs.concat(_externalDepsJs);
-                }
+			newModal: function (name, templateUrl, controllerName, controller, options, app) {
+				var init = function () {
+					// Criando controller da modal
+					var injects = controller;
+					if (!angular.isArray(controller)) {
+						injects = ['$modalInstance', 'envSettings', controller];
+					}
 
-                // TODO Viana: carregamento tardio componentes angular pode afetar tela já aberta, não encontrando componentes
-                // remover trecho quando este ponto for resolvido
-                if (internalDepsJs) {
-                    if (!angular.isArray(internalDepsJs)) {
-                        internalDepsJs = [internalDepsJs];
-                    }
-                    // carrega submodulos internos do sistema
-                    _externalDepsJs = _externalDepsJs.concat(internalDepsJs);
-                }
+					// tratamento para complementar array de injeção com os params
+					var func = injects[injects.length - 1]; // construtor do controller
+					var params = injects[injects.length - 2]; // penultimo argumento é a lista de parametros da modal
+					if (angular.isArray(params)) {
+						injects = injects.slice(0, injects.length - 2); // pega 
+						injects = injects.concat(params);
+						injects.push(func);
+					} else {
+						params = undefined;
+					}
 
-                define(_externalDepsJs, function (app) {
-                    var _depsModules = ['app'];
-                    if (depsModules) {
-                        _depsModules = depsModules.concat(_depsModules);
-                    }
+					var module = controllerName.split('.');
+					var submoduleCrtl = module[0] + '.' + module[1] + '.' + module[2] + '.ctrls';
+					var submoduleModal = module[0] + '.' + module[1] + '.' + module[2] + '.modals';
+					module = module[0] + '.' + module[1];
 
-                    var _module = angular.module('app.' + module, _depsModules);
+					$log.info('Load modal controller: ' + controllerName);
 
-                    if (funcConfig) {
-                        _module.config(funcConfig);
-                    }
+					angular.module(submoduleCrtl, [module]).controller(controllerName, injects);
 
-                    if (funcRun) {
-                        _module.run(funcRun);
-                    }
+					// Criando diretiva da modal
+					var _scope = {
+						onSelect: '=',
+						onCancel: '='
+					};
 
-                    // TODO Viana: carregamento tardio componentes angular pode afetar tela já aberta, não encontrando componentes
-                    //if (internalDepsJs) {
-                    //    if (!angular.isArray(internalDepsJs)) {
-                    //        internalDepsJs = [internalDepsJs];
-                    //    }
-                    //    // carrega submodulos internos do sistema
-                    //    require(internalDepsJs);
-                    //}
+					if (params) {
+						angular.forEach(params, function (param) {
+							_scope[param] = '=';
+						});
+					}
 
-                    return _module;
-                });
-            },
+					$log.info('Load modal directive: ' + name);
 
-            newModal: function (name, templateUrl, controllerName, controller, options, app) {
-                var init = function () {
-                    // Criando controller da modal
-                    var injects = controller;
-                    if (!angular.isArray(controller)) {
-                        injects = ['$modalInstance', 'envSettings', controller];
-                    }
+					angular.module(submoduleModal, [module]).directive(name, ['ciandt.components.dialogs.ModalHelper', function (modalHelper) {
+						return {
+							restrict: 'A',
+							scope: _scope,
+							link: function (scope, element, attrs) {
+								var _openOn = 'click';
+								if (attrs[name] && attrs[name] != '') {
+									_openOn = attrs[name];
+								}
 
-                    // tratamento para complementar array de injeção com os params
-                    var func = injects[injects.length - 1]; // construtor do controller
-                    var params = injects[injects.length - 2]; // penultimo argumento é a lista de parametros da modal
-                    if (angular.isArray(params)) {
-                        injects = injects.slice(0, injects.length - 2); // pega 
-                        injects = injects.concat(params);
-                        injects.push(func);
-                    } else {
-                        params = undefined;
-                    }
+								var resolver = undefined;
 
-                    var module = controllerName.split('.');
-                    var submoduleCrtl = module[0] + '.' + module[1] + '.' + module[2] + '.ctrls';
-                    var submoduleModal = module[0] + '.' + module[1] + '.' + module[2] + '.modals';
-                    module = module[0] + '.' + module[1];
+								if (params) {
+									resolver = {};
+									angular.forEach(params, function (param) {
+										resolver[param] = function () {
+											return scope.$eval(param);
+										};
+									});
+								}
 
-                    $log.info('Load modal controller: ' + controllerName);
+								element.on(_openOn, function (e) {
+									var _onSelect = undefined;
+									if (scope.onSelect) {
+										_onSelect = function () {
+											var args = [];
+											if (arguments && arguments.length > 0) {
+												angular.forEach(arguments, function (argument) {
+													args.push(argument);
+												});
+											}
+											// adiciona evento que disparou a modal
+											args.push(e);
+											scope.onSelect.apply(scope.onSelect, args);
+										};
+									}
+									modalHelper.open(templateUrl, controllerName, resolver, _onSelect, scope.onCancel, options);
+								});
+							}
+						}
+					}]);
+				};
 
-                    angular.module(submoduleCrtl, [module]).controller(controllerName, injects);
+				if (app) {
+					init(app);
+				} else {
+					define(['app'], init);
+				}
+			},
 
-                    // Criando diretiva da modal
-                    var _scope = {
-                        onSelect: '=',
-                        onCancel: '='
-                    };
+			newDirective: function (name, injects, app) {
+				var init = function () {
+					angular.module('app.directives', ['app']).directive(name, injects);
+				};
 
-                    if (params) {
-                        angular.forEach(params, function (param) {
-                            _scope[param] = '=';
-                        });
-                    }
+				if (app) {
+					init(app);
+				} else {
+					define(['app'], init);
+				}
+			},
 
-                    $log.info('Load modal directive: ' + name);
+			newFilter: function (name, injects, app) {
+				var init = function () {
+					angular.module('app.filters', ['app']).filter(name, injects);
+				};
 
-                    angular.module(submoduleModal, [module]).directive(name, ['ciandt.components.dialogs.ModalHelper', function (modalHelper) {
-                        return {
-                            restrict: 'A',
-                            scope: _scope,
-                            link: function (scope, element, attrs) {
-                                var _openOn = 'click';
-                                if (attrs[name] && attrs[name] != '') {
-                                    _openOn = attrs[name];
-                                }
+				if (app) {
+					init(app);
+				} else {
+					define(['app'], init);
+				}
+			},
 
-                                var resolver = undefined;
+			newModule: function (module, options) {
+				var envJsPath = options && angular.isDefined(options.envJsPath) ? options.envJsPath : 'app/{module}/env/{module}-env.js';
+				var useRestangular = options && angular.isDefined(options.useRestangular) ? options.useRestangular : true;
+				var envSettingsName = options && options.envSettingsName ? options.envSettingsName : 'envSettings';
+				var externalDepsJs = options && options.externalDeps ? options.externalDeps : undefined;
+				var depsModules = options && options.angularModules ? options.angularModules : undefined;
+				var internalDepsJs = options && options.internalDeps ? options.internalDeps : undefined;
+				var funcConfig = options && options.config ? options.config : undefined;
+				var funcRun = options && options.run ? options.run : undefined;
 
-                                if (params) {
-                                    resolver = {};
-                                    angular.forEach(params, function (param) {
-                                        resolver[param] = function () {
-                                            return scope.$eval(param);
-                                        };
-                                    });
-                                }
+				var _envJsPath;
+				if (envJsPath) {
+					var _envJsPath = envJsPath.replace(/{module}/g, module);
+				}
 
-                                element.on(_openOn, function (e) {
-                                    var _onSelect = undefined;
-                                    if (scope.onSelect) {
-                                        _onSelect = function () {
-                                            var args = [];
-                                            if (arguments && arguments.length > 0) {
-                                                angular.forEach(arguments, function (argument) {
-                                                    args.push(argument);
-                                                });
-                                            }
-                                            // adiciona evento que disparou a modal
-                                            args.push(e);
-                                            scope.onSelect.apply(scope.onSelect, args);
-                                        };
-                                    }
-                                    modalHelper.open(templateUrl, controllerName, resolver, _onSelect, scope.onCancel, options);
-                                });
-                            }
-                        }
-                    }]);
-                };
+				var _externalDepsJs = ['app'];
+				if (externalDepsJs) {
+					if (!angular.isArray(externalDepsJs)) {
+						externalDepsJs = [externalDepsJs];
+					}
+					_externalDepsJs = externalDepsJs.concat(_externalDepsJs);
+				}
 
-                if (app) {
-                    init(app);
-                } else {
-                    define(['app'], init);
-                }
-            },
+				define(_externalDepsJs, function (app) {
+					var _depsModules = ['app'];
+					if (depsModules) {
+						_depsModules = depsModules.concat(_depsModules);
+					}
 
-            newDirective: function (name, injects, app) {
-                var init = function () {
-                    angular.module('app.directives', ['app']).directive(name, injects);
-                };
+					var _module = angular.module('app.' + module, _depsModules);
 
-                if (app) {
-                    init(app);
-                } else {
-                    define(['app'], init);
-                }
-            },
+					// function para complementar criação do modulo, a ser chamado dentro do require env, ou fora, caso nao haja env
+					var _createModule = function (moduleEnvSettings) {
+						if (funcConfig) {
+							_module.config(funcConfig);
+						}
 
-            newFilter: function (name, injects, app) {
-                var init = function () {
-                    angular.module('app.filters', ['app']).filter(name, injects);
-                };
+						if (funcRun) {
+							_module.run(funcRun);
+						}
 
-                if (app) {
-                    init(app);
-                } else {
-                    define(['app'], init);
-                }
-            },
+						// FIXME Viana: excuta config, run e demais fn do módulo
+						// registro pelo newModule não garante execução do config e run dos módulos, trecho abaixo força execução correta de cada modulo
+						var i, ii, invokeQueue;
+						for (invokeQueue = _module._invokeQueue, i = 0, ii = invokeQueue.length; i < ii; i++) {
+							var invokeArgs = invokeQueue[i];
+							if (invokeArgs[2].length > 0 && invokeArgs[2][0].length > 0) {
+								var provider = $injector.get(invokeArgs[0]);
+								// config
+								provider[invokeArgs[1]].apply(provider, invokeArgs[2]);
+							}
+						}
+						angular.forEach(_module._runBlocks, function (fn) {
+							// run
+							if (fn.length > 0) {
+								$injector.invoke(fn);
+							}
+						});
 
-            loadModules: function (url, options, onloadmodule, onfinish) {
+						var hasInternalDeps = false;
+						if (internalDepsJs) {
+							if (!angular.isArray(internalDepsJs)) {
+								internalDepsJs = [internalDepsJs];
+							}
+							if (internalDepsJs.length > 0) {
+								hasInternalDeps = true;
+								// carrega submodulos internos do sistema
+								require(internalDepsJs, function () {
+									// emit event module loaded
+									$rootScope.$broadcast('factory:moduleloaded', module, moduleEnvSettings, arguments);
+								});
+							}
+						}
+
+						if (!hasInternalDeps) {
+							// emit event module loaded
+							$rootScope.$broadcast('factory:moduleloaded', module, moduleEnvSettings);
+						}
+					}
+
+					if (!envJsPath) {
+						// se não utilizar env.js, completa carregamento do modulo
+						_createModule();
+					} else {
+						// carrega env definido e depois complementa carregamento do módulo
+						require([_envJsPath], function (moduleEnvSettings) {
+							// atribui env do módulo no envSettings global
+							var envSettings = $injector.get(envSettingsName);
+							envSettings[module] = moduleEnvSettings;
+
+							// carrega restangular do modulo, caso haja url base
+							if (useRestangular && moduleEnvSettings.apiUrlBase) {
+								angular.module('app.' + module).factory(module + 'RestService', ['Restangular', function (Restangular) {
+									return Restangular.withConfig(function (RestangularConfigurer) {
+										RestangularConfigurer.setBaseUrl(moduleEnvSettings.apiUrlBase);
+										RestangularConfigurer.onElemRestangularized = function (elem, isCollection, route, Restangular) {
+											elem.copy = function (_elem) {
+												// cria método copy na instancia do service Restangular para adicionar rota base
+												//  >> metodo clone não faz isso, provavelmente bug do Restangular
+												var _newElem = Restangular.copy(_elem);
+												_newElem.route = route;
+												return _newElem;
+											};
+
+											//ToDo: Tanato Melhorar os métodos de download, corrigir para mostrar o nome do arquivo correto.
+											elem.getDownload = function (queryParams) {
+												elem.withHttpConfig({ responseType: 'arraybuffer' }).get(queryParams).then(function (data) {
+													var blob = new Blob([data], { type: data.headers["content-type"] });
+
+													var contentDisposition = data.headers["content-disposition"];
+													var filename = contentDisposition.substring((contentDisposition.indexOf('filename=') + 9));
+
+													saveAs(blob, filename);
+												});
+											};
+											elem.postDownload = function (bodyContent, queryParams) {
+												elem.withHttpConfig({ responseType: 'arraybuffer' }).post(bodyContent, queryParams).then(function (data) {
+													var blob = new Blob([data], { type: data.headers["content-type"] });
+
+													var contentDisposition = data.headers["content-disposition"];
+													var filename = contentDisposition.substring((contentDisposition.indexOf('filename=') + 9));
+
+													saveAs(blob, filename);
+												});
+											};
+											return elem;
+										};
+									});
+								}]);
+							}
+
+						    // completa carregamento do modulo
+							_createModule(moduleEnvSettings);
+						});
+					}
+				});
+			},
+
+			loadModules: function (url, options, _onfinish) {
 				var ignoredModules;
-				var envJsPath;
 				var appJsPath;
-				var useRestangular;
-				
+				var onloadmodule;
+				var onfinish;
+
 				if (options && typeof options.push == "function") {
 					ignoredModules = options;
-					envJsPath = 'app/{module}/env/{module}-env.js';
 					appJsPath = 'app/{module}/{module}-app.js';
-					useRestangular = true;
+					onfinish = _onfinish;
 				} else {
 					ignoredModules = options ? options.ignoredModules : undefined;
-					envJsPath = options && angular.isDefined(options.envJsPath) ? options.envJsPath : 'app/{module}/env/{module}-env.js';
-					appJsPath = options && angular.isDefined(options.appJsPath) ? options.appJsPath : 'app/{module}/{module}-app.js';
-					useRestangular = options && angular.isDefined(options.useRestangular) ? options.useRestangular : true;
+					appJsPath = options && options.appJsPath ? options.appJsPath : 'app/{module}/{module}-app.js';
+					onloadmodule = options.onloadmodule;
+					onfinish = options.onfinish;
 				}
 				
-                require([url], function (response) {
-                    var size = response.modules.length;
-                    var count = 0;
-                    // pra cada modulo, carrega o env e app do mesmo
-                    angular.forEach(response.modules, function (module) {
-                        // verifica se modulo não está na lista de ignorados no load
-                        if (ignoredModules && _.any(ignoredModules, function (item) { return item == module })) {
-                            count++;
-                        } else {
-                            $log.info('Load module: ' + module);
-							var _envJsPath = envJsPath.replace(/{module}/g, module);
+				require([url], function (response) {
+					var size = response.modules.length;
+					var count = 0; // atd modulos carregados via require
+
+					var modulesLoaded = [];
+					$rootScope.$on('factory:moduleloaded', function (e, moduleloaded, moduleEnvSettings) {
+						if (onloadmodule) {
+							// se informado, chama evento de fim carregamento do modulo
+							onloadmodule(moduleloaded, moduleEnvSettings);
+						}
+
+						if (!_.any(modulesLoaded, function (item) { return item == moduleloaded })) {
+							modulesLoaded.push(moduleloaded);
+						}
+
+						// após carregar todos os módulos dispara evento
+						if (modulesLoaded.length == count && onfinish) {
+							onfinish(response.modules);
+						}
+					});
+
+					// pra cada modulo, carrega o env e app do mesmo
+					angular.forEach(response.modules, function (module) {
+						// verifica se modulo não está na lista de ignorados no load
+						if (!(ignoredModules && _.any(ignoredModules, function (item) { return item == module }))) {
+							count++;
+							$log.info('Load module: ' + module);
 							var _appJsPath = appJsPath.replace(/{module}/g, module);
-                            // carrega env
-                            require([_envJsPath], function (moduleEnvSettings) {
-                                // carrega app
-                                require([_appJsPath], function (moduleFn) {
-                                    // TODO Viana: avaliar se concorrencia no carregamento dos scripts pode dar problemas no count
-                                    count++;
-                                    // FIXME Viana: excuta config, run e demais fn do módulo
-                                    // registro pelo newModule não garante execução do config e run dos módulos, trecho abaixo força execução correta de cada modulo
-                                    var i, ii, invokeQueue;
-                                    for (invokeQueue = moduleFn._invokeQueue, i = 0, ii = invokeQueue.length; i < ii; i++) {
-                                        var invokeArgs = invokeQueue[i];
-                                        if (invokeArgs[2].length > 0 && invokeArgs[2][0].length > 0) {
-                                            var provider = $injector.get(invokeArgs[0]);
-                                            // config
-                                            provider[invokeArgs[1]].apply(provider, invokeArgs[2]);
-                                        }
-                                    }
-                                    angular.forEach(moduleFn._runBlocks, function (fn) {
-                                        // run
-                                        if (fn.length > 0) {
-                                            $injector.invoke(fn);
-                                        }
-                                    });
+							// carrega app
+							require([_appJsPath]);
+						}
+					});
+				});
+			}
+		};
 
-                                    // carrega restangular do modulo, caso haja url base
-                                    if (useRestangular && moduleEnvSettings.apiUrlBase) {
-                                        angular.module('app.' + module).factory(module + 'RestService', ['Restangular', function (Restangular) {
-                                            return Restangular.withConfig(function (RestangularConfigurer) {
-                                                RestangularConfigurer.setBaseUrl(moduleEnvSettings.apiUrlBase);
-                                                RestangularConfigurer.onElemRestangularized = function (elem, isCollection, route, Restangular) {
-                                                    elem.copy = function (_elem) {
-                                                        // cria método copy na instancia do service Restangular para adicionar rota base
-                                                        //  >> metodo clone não faz isso, provavelmente bug do Restangular
-                                                        var _newElem = Restangular.copy(_elem);
-                                                        _newElem.route = route;
-                                                        return _newElem;
-                                                    };
+		angular.extend(this, window.factory);
 
-                                                    //ToDo: Tanato Melhorar os métodos de download, corrigir para mostrar o nome do arquivo correto.
-                                                    elem.getDownload = function (queryParams) {
-                                                        elem.withHttpConfig({ responseType: 'arraybuffer' }).get(queryParams).then(function (data) {
-                                                            var blob = new Blob([data], { type: data.headers["content-type"] });
-
-                                                            var contentDisposition = data.headers["content-disposition"];
-                                                            var filename = contentDisposition.substring((contentDisposition.indexOf('filename=') + 9));
-
-                                                            saveAs(blob, filename);
-                                                        });
-                                                    };
-                                                    elem.postDownload = function (bodyContent, queryParams) {
-                                                        elem.withHttpConfig({ responseType: 'arraybuffer' }).post(bodyContent, queryParams).then(function (data) {
-                                                            var blob = new Blob([data], { type: data.headers["content-type"] });
-
-                                                            var contentDisposition = data.headers["content-disposition"];
-                                                            var filename = contentDisposition.substring((contentDisposition.indexOf('filename=') + 9));
-
-                                                            saveAs(blob, filename);
-                                                        });
-                                                    };
-                                                    return elem;
-                                                };
-                                            });
-                                        }]);
-                                    }
-
-                                    if (onloadmodule) {
-                                        // se informado, chama evento de fim carregamento do modulo
-                                        onloadmodule(module, moduleEnvSettings);
-                                    }
-
-                                    if (count == size && onfinish) {
-                                        // se informado, chama evento de fim carregamento de todos os modulos
-                                        onfinish(response.modules);
-                                    }
-                                });
-                            });
-                        }
-                    });
-                });
-            }
-        };
-
-        angular.extend(this, window.factory);
-
-        this.$get = [function () {
-            return angular.extend({}, window.factory);
-        }];
-    }]);
+		this.$get = [function () {
+			return angular.extend({}, window.factory);
+		}];
+	}]);
 
 });

@@ -88,48 +88,56 @@ Factory helper to easily create angularjs components (controllers, directives, f
    ]);
    ```
 
-6. **loadModules(url, options, onloadmodule, onfinish)**
-   * this function loads all modules returned by the response of the called url. It's recomended if your app has modules that are dynamicaly loaded.
-   * options:
-   - ignoredModules: list of modules to ignore
-   - envJsPath: path to env settings json module
-   - appJsPath: path to app.js module
-   ```javascript
-   factory.loadModules('myModules.json', {ignoredModules: ['common'], envJsPath: 'app/{module}/env.js', appJsPath: 'app/{module}/app.js'}, function (module, moduleEnvSettings) {
-         // event called when it finishes loading each module
-      },
-      function (modules) {
-         // event called when it finishes loading all modules
-      }
-   );
-   
-   // myModules.json:
-   define({modules:['common', 'security', 'billing']});
-   ```
-   - this function also create a Restangular service for each module, it's named [module]RestService. You can disable this feature using option useRestangular=false for this.
-
-7. **newModule(module, externalDepsJs, depsModules, internalDepsJs, funcConfig, funcRun)**
+6. **newModule(module, externalDepsJs, depsModules, internalDepsJs, funcConfig, funcRun)**
    - this function creates a module in your angular app
    ```javascript
-   factory.newModule('myModule',
-      [/*external scripts needed in this module, ex: jquery, dojo, angular-ngMask, etc...*/
+   factory.newModule('myModule', {
+      externalDeps: [/*external scripts needed in this module, ex: jquery, dojo, angular-ngMask, etc...*/
          'assets/libs/externalScript1.js',
 		 'assets/libs/externalScript2.js'
       ],
-      [/*angular modules that depends on this module*/
-         'ngMask'
+      angularModules: [/*angular modules that depends on this module*/
+         'ngMask', 'ngResources'
       ],
-      [/*internal scripts needed in this module, ex: directives, filters, controllers, etc...*/
+      internalDeps: [/*internal scripts needed in this module, ex: directives, filters, controllers, etc...*/
          'app/mymodule/directives/my-directives.js'
       ],
-      [/*angular config block for this module*/
+      config: [/*angular config block for this module*/
          'ngMaskConfig', function(ngMaskConfig){
             ...
          }
       ],
-      [/*angular run block for this module*/
+      run: [/*angular run block for this module*/
          '$rootScope', function($rootScope){
             ...
          }
-      ]);
+      ],
+      envJsPath: 'app/{module}/env/{module}-env.js', // path to module env settings, if null the load env is ignored
+      useRestangular: true/false, // if true it will a restangular factory for a module named [module]RestService, e.g.: myModuleRestService. It'll be created if environment settings will has apiUrlBase property.
+	  envSettingsName: 'envSettings' // contant name for the global environment settings, it's used as complement to envJsPath.
+   });
    ```
+
+6. **loadModules(url, options, onloadmodule, onfinish)**
+   * this function loads all modules returned by the response of the called url. It's recomended if your app has modules that are dynamicaly loaded.
+   * options:
+   - ignoredModules: list of modules to ignore
+   - appJsPath: path to app.js module
+   - onloadmodule: event dispatch when module is loaded
+   - onfinish: event dispatch when all modules are loaded
+   ```javascript
+   factory.loadModules('myModules.json', {
+      ignoredModules: ['common'],
+      appJsPath: 'app/{module}/app.js',
+      onloadmodule: function (module, moduleEnvSettings) {
+         // event called when it finishes loading each module
+      },
+      onfinish: function (modules) {
+         // event called when it finishes loading all modules
+      }
+   });
+   
+   // myModules.json:
+   define({modules:['common', 'security', 'billing']});
+   ```
+   - recommended use newModule in your app.js
