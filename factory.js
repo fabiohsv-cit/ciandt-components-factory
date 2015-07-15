@@ -322,6 +322,10 @@ define(['ciandt-components-dialogs',
 				var onloadmodule;
 				var onfinish;
 
+				if (typeof options == "function") {
+					_onfinish = options;
+					appJsPath = 'app/{module}/{module}-app.js';
+				} else
 				if (options && typeof options.push == "function") {
 					ignoredModules = options;
 					appJsPath = 'app/{module}/{module}-app.js';
