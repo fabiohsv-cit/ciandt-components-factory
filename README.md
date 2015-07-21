@@ -23,12 +23,14 @@ Factory helper to easily create angularjs components (controllers, directives, f
 * Requirements:
 
    * the factory work with control of script version and load the correct script based on version mapper. Your app should has the version.json file, where you should write the mapping between original js file and version named js file. The version.json file is loaded on load factory, using requirejs. The version.json content should be similar to:
+   ```json
    {
       "version": "1.0.0",
       "files": {
          "yourScript.js": "yourScript-hashGenOnBuild.js"
       }
    }
+   ```
 
    - version.json
    - lodash: it's used in internal statement
