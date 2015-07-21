@@ -33,8 +33,6 @@ define(['json!version',
 		window.factory = {
 		    getFileVersion: getFileVersion,
 
-		    applyFileVersion: applyFileVersion,
-
 		    newController: function (controllerName, func, app) {
 		        var injects = func;
 		        if (!angular.isArray(func)) {

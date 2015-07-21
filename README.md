@@ -22,6 +22,15 @@ Factory helper to easily create angularjs components (controllers, directives, f
 
 * Requirements:
 
+   * the factory work with control of script version and load the correct script based on version mapper. Your app should has the version.json file, where you should write the mapping between original js file and version named js file. The version.json file is loaded on load factory, using requirejs. The version.json content should be similar to:
+   {
+      "version": "1.0.0",
+      "files": {
+         "yourScript.js": "yourScript-hashGenOnBuild.js"
+      }
+   }
+
+   - version.json
    - lodash: it's used in internal statement
    - ciandt.components.dialogs: it's used to open the modal (newModal function below)
    - requirejs: it's used to load the module scripts (app.js, env.js, etc).
@@ -162,3 +171,6 @@ Factory helper to easily create angularjs components (controllers, directives, f
    define(function(){return ['common', 'security', 'billing']};);
    ```
    - recommended use newModule in your app.js
+
+6. **getFileVersion(file)**
+   * this function translate the original file to the deployed file, using version.json mapping.
