@@ -1,5 +1,5 @@
 # ciandt-components-factory
-Factory helper to easily create angularjs components (controllers, directives, filters...) and ensures that all dependencies are loaded before it, using requirejs. In other words, the factory easily integrates requirejs and angular. The factory should be used on a javascript file to declare same angularjs components types. Each component type has a factory function. See more below.
+Factory helper to easily create angularjs components (controllers, directives, filters...) and ensure that all dependencies are loaded before it, using requirejs. In other words, the factory easily integrates requirejs and angular. The factory should be used on a javascript file to declare same angularjs components types. Each component type has a factory function. See more below.
 
 ### Install
 
@@ -22,7 +22,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
 
 * Requirements:
 
-   * the factory work with control of script version and load the correct script based on version mapper. Your app should has the version.json file, where you should write the mapping between original js file and version named js file. The version.json file is loaded on load factory, using requirejs. The version.json content should be similar to:
+   * the factory works with control of script version and loads the correct script based on version mapper. Your app should have a version.json file, where you should write the mapping between original js file and version-named js file. The version.json file is loaded on load factory, using requirejs. The version.json content should be similar to:
    ```json
    {
       "version": "1.0.0",
@@ -33,7 +33,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    ```
 
    - version.json
-   - lodash: it's used in internal statement
+   - lodash: it's used in internal statements
    - ciandt.components.dialogs: it's used to open the modal (newModal function below)
    - requirejs: it's used to load the module scripts (app.js, env.js, etc).
    - restangular: it's used to create a restangular factory to the module (newModule function below).
@@ -48,7 +48,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    ```javascript
    factory.newController("yourController", [function () {
       // your controller body
-	  // we recommend write controller using vm pattern
+	  // we recommend writting the controller using vm pattern
    }]);
    ```
 
@@ -133,8 +133,8 @@ Factory helper to easily create angularjs components (controllers, directives, f
          }
       ],
       envJsPath: 'app/{module}/env/{module}-env.js', // path to module env settings, if null the load env is ignored
-      useRestangular: true/false, // if true it will a restangular factory for a module named [module]RestService, e.g.: myModuleRestService. It'll be created if environment settings will has apiUrlBase property.
-	  envSettingsName: 'envSettings' // contant name for the global environment settings, it's used as complement to envJsPath.
+      useRestangular: true/false, // if true it will create a restangular factory for a module named [module]RestService, e.g.: myModuleRestService. It'll be created if environment settings has a apiUrlBase property.
+	  envSettingsName: 'envSettings' // contains the name of the global environment settings, it's used as complement to envJsPath.
    });
    ```
 
@@ -172,7 +172,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    // myModules.json:
    define(function(){return ['common', 'security', 'billing']};);
    ```
-   - recommended use newModule in your app.js
+   - recommended using newModule in your app.js
 
 6. **getFileVersion(file)**
-   * this function translate the original file to the deployed file, using version.json mapping.
+   * this function translates the original file to the deployed file, using version.json mapping.
