@@ -7,18 +7,23 @@ define(['json!version',
 		'lodash'], function (version) {
 
 	function getFileVersion(file) {
-		if (version && version.files && version.files[file]) {
-			return version.files[file];
-		} else {
-			return file;
-		}
-	}
+        if (version && version.files) {
+            var f = file.split('!');
+            if (f.length == 2 && version.files[f[1]]) {
+                return f[0] + '!' + version.files[f[1]];
+            }
+            else if (version.files[file]) {
+                return version.files[file];
+            }
+        }
+        return file;
+    }
 
 	function applyFileVersion(files) {
 		var i = 0;
 		for (i = 0; i < files.length; i++) {
 			if (version && version.files && version.files[files[i]]) {
-				files[i] = version.files[files[i]];
+				files[i] = getFileVersion(files[i]);
 			}
 		}
 		return files;
