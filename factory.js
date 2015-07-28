@@ -214,7 +214,7 @@ define(['json!version',
 
 		        var _envJsPath;
 		        if (envJsPath) {
-		            var _envJsPath = envJsPath.replace(/{module}/g, module);
+		            _envJsPath = envJsPath.replace(/{module}/g, module);
 		        }
 
 		        var _externalDepsJs = ['app'];
