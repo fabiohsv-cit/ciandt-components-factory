@@ -1,14 +1,14 @@
 {
-  "name": "ciandt-components-factory",
+  "name": "ng-jedi-factory",
   "version": "0.0.1",
-  "homepage": "https://github.com/fabiohsv-cit/ciandt-components-factory",
+  "homepage": "https://github.com/ng-jedi/factory",
   "authors": [
-    "Fábio Henrique da Silva Viana <fabiohsv@ciandt.com>"
+    "Fábio Henrique da Silva Viana <fabioviana.bh@gmail.com>"
   ],
   "description": "Factory helper to create with facility angularjs components (controllers, directives, filters...)",
   "main": ["factory.js"],
   "dependencies": {
-	"ciandt-components-dialogs": "*"
+	"ng-jedi-dialogs": "*"
   },
   "moduleType": [
     "globals"

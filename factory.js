@@ -1,7 +1,7 @@
 'use strict';
 
 define(['json!version',
-        'ciandt-components-dialogs',
+        'ng-jedi-dialogs',
         'restangular',
         'file-saver-saveas-js',
         'lodash'], function (version) {
@@ -29,15 +29,19 @@ define(['json!version',
 		return files;
 	}
 
-	window.factory = { getFileVersion: getFileVersion };
+	if (!window.jd) {
+		window.jd = {};
+	}
 
-	angular.module('ciandt.components.factory', ['ciandt.components.dialogs', 'restangular']);
+	window.jd.factory = { getFileVersion: getFileVersion };
 
-	angular.module('ciandt.components.factory').provider('ciandt.components.factory.FactoryHelper', ['$injector', function ($injector) {
+	angular.module('jedi.factory', ['jedi.dialogs', 'restangular']);
+
+	angular.module('jedi.factory').provider('jedi.factory.FactoryHelper', ['$injector', function ($injector) {
 		var $log = angular.injector(['ng']).get('$log');
 		var $rootScope = angular.injector(['ng']).get('$rootScope');
 
-		angular.extend(window.factory, {
+		angular.extend(window.jd.factory, {
 		    newController: function (controllerName, func, app) {
 		        var injects = func;
 		        if (!angular.isArray(func)) {
@@ -128,7 +132,7 @@ define(['json!version',
 
 		            $log.info('Load modal directive: ' + name);
 
-		            angular.module(submoduleModal, [module]).directive(name, ['ciandt.components.dialogs.ModalHelper', function (modalHelper) {
+		            angular.module(submoduleModal, [module]).directive(name, ['jedi.dialogs.ModalHelper', function (modalHelper) {
 		                return {
 		                    restrict: 'A',
 		                    scope: _scope,

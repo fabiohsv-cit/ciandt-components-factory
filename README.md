@@ -1,4 +1,4 @@
-# ciandt-components-factory
+# ng-jedi-factory
 Factory helper to easily create angularjs components (controllers, directives, filters...) and ensure that all dependencies are loaded before it, using requirejs. In other words, the factory easily integrates requirejs and angular. The factory should be used on a javascript file to declare same angularjs components types. Each component type has a factory function. See more below.
 
 ### Install
@@ -6,18 +6,18 @@ Factory helper to easily create angularjs components (controllers, directives, f
 * Install the dependency:
 
    ```shell
-   bower install ciandt-components-factory --save
+   bower install ng-jedi-factory --save
    ```
 * Add factory.js to your code:
 
    ```html
-   <script src='assets/libs/ciandt-components-factory/factory.js'></script>
+   <script src='assets/libs/ng-jedi-factory/factory.js'></script>
    ```
    - note that the base directory used was assets/libs, you should change bower_components to assets/libs or move from bower_components to assets/libs with grunt.
 * Include module dependency:
 
    ```javascript
-   angular.module('yourApp', ['ciandt.components.factory']);
+   angular.module('yourApp', ['jedi.factory']);
    ```
 
 * Requirements:
@@ -34,7 +34,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
 
    - version.json
    - lodash: it's used in internal statements
-   - ciandt.components.dialogs: it's used to open the modal (newModal function below)
+   - jedi.dialogs: it's used to open the modal (newModal function below)
    - requirejs: it's used to load the module scripts (app.js, env.js, etc).
    - restangular: it's used to create a restangular factory to the module (newModule function below).
    - file-saver-saveas-js: it's used to expose methods to download using restangular factory.
@@ -46,7 +46,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
 1. **newController(controllerName, func)**
    - this function creates a new controller in your angular module
    ```javascript
-   factory.newController("yourController", [function () {
+   jd.factory.newController("yourController", [function () {
       // your controller body
 	  // we recommend writting the controller using vm pattern
    }]);
@@ -55,7 +55,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
 2. **newService(serviceName, api, actions, params)**
    - this function creates a new service based in $resource
    ```javascript
-   factory.newService("yourService", 'api/myAction/:userId', {'get': {method: 'GET'}}, {itemId:'@id'});
+   jd.factory.newService("yourService", 'api/myAction/:userId', {'get': {method: 'GET'}}, {itemId:'@id'});
    .
    .
    // using 'yourService' in a controller
@@ -66,14 +66,14 @@ Factory helper to easily create angularjs components (controllers, directives, f
    ```
 
 3. **newModal(directiveName, templateUrl, controllerName, injection, modalOptions)**
-   * this function creates a new directive and a controller at the same time, to open as a modal. It uses ciandt.components.dialogs.ModalHelper to open the modal.
+   * this function creates a new directive and a controller at the same time, to open as a modal. It uses jedi.dialogs.ModalHelper to open the modal.
    - directiveName: directive name that will be created
    - templateUrl: url to your html
    - controllerName: controller name that will be created
    - injection: it's an array that represent injections, input params and the controller function. Important: if your controller needs input parametters, you should declare them imediately before the controller function, in an array of strings.
    - modalOptions: modal options, e.g. {size: 'lg'}
    ```javascript
-   factory.newModal("yourModalDirective", 'app/view/yourModal.html', ['myService', ['param1', 'param2'], function (myService, param1, param2) {
+   jd.factory.newModal("yourModalDirective", 'app/view/yourModal.html', ['myService', ['param1', 'param2'], function (myService, param1, param2) {
       // your controller body
 	  // we recommend writting the controller using the vm pattern
    }], {size: 'lg'});
@@ -88,7 +88,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
 4. **newDirective(name, injects)**
    - this function creates a new directive in your angular module
    ```javascript
-   factory.newDirective("yourDirective", [function () {
+   jd.factory.newDirective("yourDirective", [function () {
       return {
          restrict: 'A',
          link: function (scope, element, attrs) {
@@ -101,7 +101,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
 5. **newFilter(name, injects)**
    - this function creates a new filter in your angular module
    ```javascript
-   factory.newFilter('haveModuleWithFeatures', [function () {
+   jd.factory.newFilter('haveModuleWithFeatures', [function () {
       return function (values) {
          return ...;
       }
@@ -111,7 +111,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
 6. **newModule(module, options)**
    - this function creates a module in your angular app
    ```javascript
-   factory.newModule('myModule', {
+   jd.factory.newModule('myModule', {
       externalDeps: [/*external scripts needed in this module, ex: jquery, dojo, angular-ngMask, etc...*/
          'assets/libs/externalScript1.js',
 		 'assets/libs/externalScript2.js'
@@ -134,7 +134,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
       ],
       envJsPath: 'app/{module}/env/{module}-env.js', // path to module env settings, if null the load env is ignored
       useRestangular: true/false, // if true it will create a restangular factory for a module named [module]RestService, e.g.: myModuleRestService. It'll be created if environment settings has a apiUrlBase property.
-	  envSettingsName: 'envSettings' // contains the name of the global environment settings, it's used as complement to envJsPath.
+	   envSettingsName: 'envSettings' // contains the name of the global environment settings, it's used as complement to envJsPath.
    });
    ```
 
@@ -146,7 +146,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    - onloadmodule: event dispatch when module is loaded
    - onfinish: event dispatch when all modules are loaded
    ```javascript
-   factory.loadModules('myModules.json', {
+   jd.factory.loadModules('myModules.json', {
       ignoredModules: ['common'],
       appJsPath: 'app/{module}/app.js',
       onloadmodule: function (module, moduleEnvSettings) {
@@ -159,7 +159,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    
    Or
    
-   factory.loadModules(['myModule1', 'myModule1'], {
+   jd.factory.loadModules(['myModule1', 'myModule1'], {
       appJsPath: 'app/{module}/app.js',
       onloadmodule: function (module, moduleEnvSettings) {
          // event called when it finishes loading each module
@@ -170,7 +170,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    });
    
    // myModules.json:
-   define(function(){return ['common', 'security', 'billing']};);
+   ['common', 'security', 'billing']
    ```
    - recommended using newModule in your app.js
 
