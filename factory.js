@@ -143,6 +143,7 @@ define(['json!version',
                                     if (attrs[name] && attrs[name] != '') {
                                         _openOn = attrs[name];
                                     }
+                                    _openOn += '.jdmodal';
 
                                     var resolver = undefined;
 
@@ -171,6 +172,10 @@ define(['json!version',
                                             };
                                         }
                                         modalHelper.open(templateUrl, controllerName, resolver, _onSelect, scope.onCancel, options);
+                                    });
+
+                                    scope.$on('$destroy', function () {
+                                        element.unbind(_openOn);
                                     });
                                 }
                             }
