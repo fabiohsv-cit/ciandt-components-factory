@@ -44,7 +44,32 @@ define(['json!version',
             var $rootScope = angular.injector(['ng']).get('$rootScope');
 
             angular.extend(window.jd.factory, {
-                newController: function (controllerName, func, app) {
+                newController: function () {
+                    var controllerName, func, app;
+                    var deps = ['app'];
+
+                    var i=0;
+
+                    if (arguments.length >= i+1 && _.isArray(arguments[i])) {
+                        deps = deps.concat(arguments[i]);
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        controllerName = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        func = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        app = arguments[i];
+                        i++;
+                    }
+
                     var injects = func;
                     if (!angular.isArray(func)) {
                         var serviceName = controllerName.replace('Ctrl', 'Service');
@@ -65,11 +90,46 @@ define(['json!version',
                     if (app) {
                         init(app);
                     } else {
-                        define(['app'], init);
+                        define(deps, init);
                     }
                 },
 
-                newService: function (serviceName, api, actions, params, app) {
+                newService: function () {
+                    var serviceName, api, actions, params, app;
+                    var deps = ['app'];
+
+                    var i=0;
+
+                    if (arguments.length >= i+1 && _.isArray(arguments[i])) {
+                        deps = deps.concat(arguments[i]);
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        serviceName = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        api = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        actions = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        params = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        app = arguments[i];
+                        i++;
+                    }
+
                     if (!params) {
                         params = {}
                     }
@@ -88,11 +148,51 @@ define(['json!version',
                     if (app) {
                         init(app);
                     } else {
-                        define(['app'], init);
+                        define(deps, init);
                     }
                 },
 
-                newModal: function (name, templateUrl, controllerName, controller, options, app) {
+                newModal: function () {
+                    var name, templateUrl, controllerName, controller, options, app;
+                    var deps = ['app'];
+
+                    var i=0;
+
+                    if (arguments.length >= i+1 && _.isArray(arguments[i])) {
+                        deps = deps.concat(arguments[i]);
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        name = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        templateUrl = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        controllerName = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        controller = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        options = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        app = arguments[i];
+                        i++;
+                    }
+
                     var init = function () {
                         // Criando controller da modal
                         var injects = controller;
@@ -185,11 +285,36 @@ define(['json!version',
                     if (app) {
                         init(app);
                     } else {
-                        define(['app'], init);
+                        define(deps, init);
                     }
                 },
 
-                newDirective: function (name, injects, app) {
+                newDirective: function () {
+                    var name, injects, app;
+                    var deps = ['app'];
+
+                    var i=0;
+
+                    if (arguments.length >= i+1 && _.isArray(arguments[i])) {
+                        deps = deps.concat(arguments[i]);
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        name = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        injects = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        app = arguments[i];
+                        i++;
+                    }
+
                     var init = function () {
                         angular.module('app.directives', ['app']).directive(name, injects);
                     };
@@ -197,11 +322,36 @@ define(['json!version',
                     if (app) {
                         init(app);
                     } else {
-                        define(['app'], init);
+                        define(deps, init);
                     }
                 },
 
-                newFilter: function (name, injects, app) {
+                newFilter: function () {
+                    var name, injects, app;
+                    var deps = ['app'];
+
+                    var i=0;
+
+                    if (arguments.length >= i+1 && _.isArray(arguments[i])) {
+                        deps = deps.concat(arguments[i]);
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        name = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        injects = arguments[i];
+                        i++;
+                    }
+
+                    if (arguments.length >= i+1) {
+                        app = arguments[i];
+                        i++;
+                    }
+
                     var init = function () {
                         angular.module('app.filters', ['app']).filter(name, injects);
                     };
@@ -209,7 +359,7 @@ define(['json!version',
                     if (app) {
                         init(app);
                     } else {
-                        define(['app'], init);
+                        define(deps, init);
                     }
                 },
 

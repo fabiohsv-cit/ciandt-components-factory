@@ -51,6 +51,13 @@ Factory helper to easily create angularjs components (controllers, directives, f
 	  // we recommend writting the controller using vm pattern
    }]);
    ```
+   - if you need load script before the of controller, you should pass in the first argument an array with js path, similar to requirejs. E.g.:
+   ```javascript
+   jd.factory.newController(['yourService.js'], "yourController", [function () {
+      // your controller body
+     // we recommend writting the controller using vm pattern
+   }]);
+   ```
 
 2. **newService(serviceName, api, actions, params)**
    - this function creates a new service based in $resource
@@ -73,7 +80,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    - injection: it's an array that represent injections, input params and the controller function. Important: if your controller needs input parametters, you should declare them imediately before the controller function, in an array of strings.
    - modalOptions: modal options, e.g. {size: 'lg'}
    ```javascript
-   jd.factory.newModal("yourModalDirective", 'app/view/yourModal.html', ['myService', ['param1', 'param2'], function (myService, param1, param2) {
+   jd.factory.newModal("yourModalDirective", 'app/view/yourModal.html', 'yourModalCtrl', ['myService', ['param1', 'param2'], function (myService, param1, param2) {
       // your controller body
 	  // we recommend writting the controller using the vm pattern
    }], {size: 'lg'});
@@ -114,7 +121,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
    jd.factory.newModule('myModule', {
       externalDeps: [/*external scripts needed in this module, ex: jquery, dojo, angular-ngMask, etc...*/
          'assets/libs/externalScript1.js',
-		 'assets/libs/externalScript2.js'
+		   'assets/libs/externalScript2.js'
       ],
       angularModules: [/*angular modules that depends on this module*/
          'ngMask', 'ngResources'
