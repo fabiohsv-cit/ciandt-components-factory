@@ -321,7 +321,7 @@ define(['json!version',
 
                                                 //ToDo: Tanato Melhorar os m�todos de download, corrigir para mostrar o nome do arquivo correto.
                                                 elem.getDownload = function (queryParams) {
-                                                    elem.withHttpConfig({ responseType: 'arraybuffer' }).get(queryParams).then(function (data) {
+                                                    elem.withHttpConfig({ responseType: 'arraybuffer', ignoreLoadingBar: true, showLoadingModal: true }).get(queryParams).then(function (data) {
                                                         var blob = new Blob([data], { type: data.headers["content-type"] });
 
                                                         var contentDisposition = data.headers["content-disposition"];
@@ -331,7 +331,7 @@ define(['json!version',
                                                     });
                                                 };
                                                 elem.postDownload = function (bodyContent, queryParams) {
-                                                    elem.withHttpConfig({ responseType: 'arraybuffer' }).post(bodyContent, queryParams).then(function (data) {
+                                                    elem.withHttpConfig({ responseType: 'arraybuffer', ignoreLoadingBar: true, showLoadingModal: true }).post(bodyContent, queryParams).then(function (data) {
                                                         var blob = new Blob([data], { type: data.headers["content-type"] });
 
                                                         var contentDisposition = data.headers["content-disposition"];
