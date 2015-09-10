@@ -51,7 +51,7 @@ Factory helper to easily create angularjs components (controllers, directives, f
 	  // we recommend writting the controller using vm pattern
    }]);
    ```
-   - if you need load script before the of controller, you should pass in the first argument an array with js path, similar to requirejs. E.g.:
+   - if you need to load a script before the controller, you should pass as the first argument an array with the js path, similar to requirejs. E.g.:
    ```javascript
    jd.factory.newController(['yourService.js'], "yourController", [function () {
       // your controller body
