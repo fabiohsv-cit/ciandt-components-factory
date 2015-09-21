@@ -64,7 +64,7 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
 	  // we recommend writting the controller using vm pattern
    }]);
    ```
-   - If you need to load a script before the controller, you should pass as the first argument an array with the js path, similar to [RequireJS](http://requirejs.org/). E.g.:
+   - If you need to load a script before the controller, you should pass as the first argument an array with the js path, similar to [RequireJS](http://requirejs.org/). e.g.:
 
    ```javascript
    jd.factory.newController(['yourService.js'], "yourController", [function () {
@@ -72,6 +72,8 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
      // we recommend writting the controller using vm pattern
    }]);
    ```
+
+**[Back to top](#how-to-use)**
 
 #### newService(serviceName, api, actions, params)
    - This function creates a new [service](https://docs.angularjs.org/guide/services) based in [$resource](https://docs.angularjs.org/api/ngResource/service/$resource)
@@ -86,6 +88,8 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
 	  item.post();
    }])
    ```
+
+**[Back to top](#how-to-use)**
 
 #### newModal(directiveName, templateUrl, controllerName, injection, modalOptions)
    * This function creates a new directive and a controller at the same time, to open as a modal. It uses [jedi.dialogs.ModalHelper](https://github.com/jediproject/ng-jedi-dialogs#custom-modal-dialog) to open the modal.
@@ -108,6 +112,8 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
    ```
    - The example above will open the page 'app/view/yourModal.html' in a modal using [$modal](http://angular-ui.github.io/bootstrap/#/modal) (an [angular-bootstrap](https://angular-ui.github.io/bootstrap) component)
 
+**[Back to top](#how-to-use)**
+
 #### newDirective(name, injects)
    - This function creates a new [directive](https://docs.angularjs.org/guide/directive) in your angular module
 
@@ -122,6 +128,8 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
    }]);
    ```
 
+**[Back to top](#how-to-use)**
+
 #### newFilter(name, injects)
    - This function creates a new [filter](https://docs.angularjs.org/guide/filter) in your angular module
 
@@ -132,6 +140,8 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
       }
    ]);
    ```
+
+**[Back to top](#how-to-use)**
 
 #### newModule(module, options)
    - This function creates a [module](https://docs.angularjs.org/guide/module) in your angular app
@@ -163,6 +173,8 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
       envSettingsName: 'envSettings' // contains the name of the global environment settings, it's used as complement to envJsPath.
    });
    ```
+
+**[Back to top](#how-to-use)**
 
 #### loadModules(urlOrModules, options)
    * This function loads all modules returned by the response of the called url. It's recomended if your app has modules that are dynamicaly loaded. The first param can be a list of modules.
@@ -198,7 +210,11 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
    // myModules.json:
    ['common', 'security', 'billing']
    ```
-   - recommended using newModule in your app.js
+   - Recommended using [newModule](#newmodulemodule-options) in your app.js
+
+**[Back to top](#how-to-use)**
 
 #### getFileVersion(file)
    * This function translates the original file to the deployed file, using version.json mapping.
+
+**[Back to top](#how-to-use)**
