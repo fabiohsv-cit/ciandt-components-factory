@@ -1,10 +1,21 @@
 'use strict';
 
-define(['json!version',
-    'ng-jedi-dialogs',
-    'restangular',
-    'file-saver-saveas-js',
-    'lodash'], function (version) {
+(function (factory) {
+    if (typeof define === 'function') {
+        define(['json!version',
+                'ng-jedi-dialogs',
+                'restangular',
+                'file-saver-saveas-js',
+                'lodash'], factory);
+    } else {
+        var _version = version;
+        if (typeof module !== "undefined" && typeof exports !== "undefined" && module.exports === exports){
+            module.exports = 'jedi.factory';
+            _version = require('version.json');
+        }
+        return factory(_version);
+    }
+}(function(version) {
 
     function getFileVersion(file) {
         if (version && version.files && file) {
@@ -86,7 +97,7 @@ define(['json!version',
                 angular.module(submodule, [module]).controller(controllerName, injects);
             };
 
-            if (app) {
+            if (app || typeof define === 'undefined') {
                 init(app);
             } else {
                 define(deps, init);
@@ -144,7 +155,7 @@ define(['json!version',
                 }]);
             };
 
-            if (app) {
+            if (app || typeof define === 'undefined') {
                 init(app);
             } else {
                 define(deps, init);
@@ -281,7 +292,7 @@ define(['json!version',
                 }]);
             };
 
-            if (app) {
+            if (app || typeof define === 'undefined') {
                 init(app);
             } else {
                 define(deps, init);
@@ -318,7 +329,7 @@ define(['json!version',
                 angular.module('app.directives', ['app']).directive(name, injects);
             };
 
-            if (app) {
+            if (app || typeof define === 'undefined') {
                 init(app);
             } else {
                 define(deps, init);
@@ -355,7 +366,7 @@ define(['json!version',
                 angular.module('app.filters', ['app']).filter(name, injects);
             };
 
-            if (app) {
+            if (app || typeof define === 'undefined') {
                 init(app);
             } else {
                 define(deps, init);
@@ -498,6 +509,7 @@ define(['json!version',
                         _createModule(moduleEnvSettings);
                     });
                 }
+                return _module;
             });
         },
 
@@ -517,23 +529,23 @@ define(['json!version',
                 }
                 appJsPath = defAppJsPath;
             } else
-                if (options && typeof options.push == "function") {
-                    ignoredModules = options;
-                    appJsPath = defAppJsPath;
-                    if (typeof _onloadmodule == "function") {
-                        if (typeof _onfinish == "function") {
-                            onfinish = _onfinish;
-                            onloadmodule = _onloadmodule;
-                        } else {
-                            onfinish = _onloadmodule;
-                        }
+            if (options && typeof options.push == "function") {
+                ignoredModules = options;
+                appJsPath = defAppJsPath;
+                if (typeof _onloadmodule == "function") {
+                    if (typeof _onfinish == "function") {
+                        onfinish = _onfinish;
+                        onloadmodule = _onloadmodule;
+                    } else {
+                        onfinish = _onloadmodule;
                     }
-                } else {
-                    ignoredModules = options ? options.ignoredModules : undefined;
-                    appJsPath = options && options.appJsPath ? options.appJsPath : defAppJsPath;
-                    onloadmodule = options.onloadmodule;
-                    onfinish = options.onfinish;
                 }
+            } else {
+                ignoredModules = options ? options.ignoredModules : undefined;
+                appJsPath = options && options.appJsPath ? options.appJsPath : defAppJsPath;
+                onloadmodule = options.onloadmodule;
+                onfinish = options.onfinish;
+            }
 
             var _loadModules = function (modules) {
                 var size = modules.length;
@@ -586,4 +598,4 @@ define(['json!version',
     });
 
     return window.jd;
-});
+}));
