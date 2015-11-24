@@ -1,0 +1,38 @@
+{
+  "name": "ng-jedi-factory",
+  "version": "0.0.1",
+  "description": "Factory helper to easily create AngularJs components.",
+  "main": "factory.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jediproject/ng-jedi-factory.git"
+  },
+  "keywords": [
+    "angular",
+    "factory",
+    "components",
+    "controller",
+    "filter",
+    "directive",
+    "module",
+    "modal",
+    "service",
+    "resource"
+  ],
+  "author": {
+    "name": "Fábio Henrique da Silva Viana",
+    "email": "fabioviana.bh@gmail.com",
+    "url": "http://jediproject.github.io"
+  },
+  "contributors": [
+    "Bruno Camodeco dos Santos <brunocs@ciandt.com>",
+    "Henrique Silva Brighenti <henriqueb@ciandt.com>",
+    "Mateus Cerqueira <mateus_mcg@icloud.com>",
+    "Tanato Cartaxo <tanatopc@gmail.com>"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jediproject/ng-jedi-factory/issues"
+  },
+  "homepage": "https://github.com/jediproject/ng-jedi-factory#readme"
+}
