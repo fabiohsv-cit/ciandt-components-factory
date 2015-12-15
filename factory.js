@@ -243,6 +243,8 @@
         }
 
         var module = controllerName.split('.');
+        var submodule = module[0] + '.' + module[1] + '.' + module[2];
+        module = module[0] + '.' + module[1];
 
         callInit(module, deps, defined, function () {
             var $log = angular.injector(['ng']).get('$log');
@@ -263,9 +265,6 @@
             } else {
                 params = undefined;
             }
-
-            var submodule = module[0] + '.' + module[1] + '.' + module[2];
-            module = module[0] + '.' + module[1];
 
             $log.info('Load modal controller: ' + controllerName);
 
@@ -338,7 +337,7 @@
 
     window.jd.factory.newDirective = function () {
         var name, injects, defined;
-        var deps = ['app'];
+        var deps = ['app'], module = 'app.directives';
 
         var i=0;
 
@@ -365,14 +364,14 @@
         callInit(module, deps, defined, function () {
             var $log = angular.injector(['ng']).get('$log');
             $log.info('Load directive: ' + name);
-            getOrCreateModule('app.directives', ['app']).directive(name, injects);
-            addRequire(module, ['app'], 'app.directives');
+            getOrCreateModule(module, ['app']).directive(name, injects);
+            addRequire(module, ['app'], module);
         });
     };
 
     window.jd.factory.newFilter = function () {
         var name, injects, defined;
-        var deps = ['app'];
+        var deps = ['app'], module = 'app.filters';
 
         var i=0;
 
@@ -400,8 +399,8 @@
             var $log = angular.injector(['ng']).get('$log');
             $log.info('Load filter: ' + name);
 
-            getOrCreateModule('app.filters', ['app']).filter(name, injects);
-            addRequire(module, ['app'], 'app.filters');
+            getOrCreateModule(module, ['app']).filter(name, injects);
+            addRequire(module, ['app'], module);
         });
     };
 
