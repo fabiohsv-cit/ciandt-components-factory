@@ -7,17 +7,19 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
 ### Install
 
 * Install the dependency:
-   ```shell
-   bower install ng-jedi-factory --save
-   ```
+```shell
+bower install ng-jedi-factory --save
+```
+
 * Add factory.js to your code:
-   ```html
-   <script src='assets/libs/ng-jedi-factory/factory.js'></script>
-   ```
+```html
+<script src='assets/libs/ng-jedi-factory/factory.js'></script>
+```
+
 * Include module dependency:
-   ```javascript
-   angular.module('yourApp', ['jedi.factory']);
-   ```
+```javascript
+angular.module('yourApp', ['jedi.factory']);
+```
 
 * Requirements:
 
