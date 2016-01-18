@@ -7,18 +7,14 @@ Factory helper to easily create [AngularJs](https://angularjs.org/) components (
 ### Install
 
 * Install the dependency:
-
    ```shell
    bower install ng-jedi-factory --save
    ```
 * Add factory.js to your code:
-
    ```html
    <script src='assets/libs/ng-jedi-factory/factory.js'></script>
    ```
-   - Note that the base directory used was assets/libs, you should change bower_components to assets/libs or move from bower_components to assets/libs with [Grunt](http://gruntjs.com/).
 * Include module dependency:
-
    ```javascript
    angular.module('yourApp', ['jedi.factory']);
    ```
