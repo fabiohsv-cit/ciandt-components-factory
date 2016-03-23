@@ -8,7 +8,7 @@
   "description": "Factory helper to create with facility angularjs components (controllers, directives, filters...)",
   "main": ["factory.js"],
   "dependencies": {
-	"ng-jedi-dialogs": "*"
+	"ng-jedi-dialogs": "#materialize"
   },
   "moduleType": [
     "globals"
